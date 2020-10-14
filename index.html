@@ -6,69 +6,84 @@
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <title>Document</title>
+    <style>
+        .incorrect{
+            color:red;
+        }
+    </style>
 </head>
 <body>
     <div id="app"></div>
     <script type="text/babel">
-    class Hello extends React.Component{
-        render(){
-            return(<div>
-                <h1>
-                   Hello! {this.props.name || "gope"}
-                </h1>
-                <button onClick={this.handleClick} >Clickme!</button>
-                </div>
-            );
-        }
-        handleClick=() => {
-           return alert("hello");
-        }
-    }
-    class AnotherHello extends React.Component{
-        render() {
-            return(<div>
-                 <Counter/>
-                 <Counter/>
-                 <Counter/>
-                 </div>
-               
-            );
-        }
-    }
-    class Counter extends React.Component{
-        render(){
-            return(<div>
-                
-                {this.state.count}
-           
-                <div>
-                <button onClick={this.increment}> Increment</button>
-                <button onClick={this.decrement}> decrement</button>
-                </div>
-                </div>
+        class App extends React.Component{
+            constructor(props){
+                super(props);
+                this.state={
+                    num1:1,
+                    num2:1,
+                    Score:0,
+                    response:"",
+                    incorrect:false
 
-            );
-        }
-        constructor(props){
-            super(props)
-            this.state={
-                count:0
+                }
+            }
+
+             render(){
+               if(this.state.Score>=5)
+               {
+                   return(this.renderWin());
+               }
+               else{
+                   return(this.renderProblem());
+               }
+             }
+
+            renderProblem(){
+                return(
+                    <div>
+                      <h1 className={this.state.incorrect ? "incorrect" :""}> {this.state.num1} + {this.state.num2} </h1>
+                      <input onKeyPress={this.inputKeyPress} onChange={this.updateResponse} value={this.state.response}/>
+                      <div>
+                        Score:{this.state.Score}
+                      </div>
+                    </div>
+                );
+            }
+            renderWin(){
+                return(
+                    <div><h1>Congratulations!! You win!!! </h1> </div>
+
+                );
+            }
+            updateResponse =(event)=>{
+                this.setState({
+                    response: event.target.value
+                });
+            }
+
+            inputKeyPress=(event)=>{
+                if(event.key==="Enter"){
+                    const answer=parseInt(this.state.response);
+                    if(answer==this.state.num1+this.state.num2){
+                       this.setState(state=>({
+                           Score:this.state.Score+1,
+                           num1:Math.ceil(Math.random()*10),
+                           num2:Math.ceil(Math.random()*10),
+                           response:"" ,
+                           incorrect:false
+                       }));
+                    }
+                    else{
+                       this.setState({
+                           response:"",
+                           incorrect:true
+                       }); 
+                    }
+                }
             }
         }
-        increment=()=>{
-            this.setState(state=>({
-                count:this.state.count+1
-            }))
-        }
-        decrement=()=>{
-            this.setState(state=>({
-                count:this.state.count-1
-            }))
-        }
-    }
-
-    ReactDOM.render(<AnotherHello/>, document.querySelector("#app"));
+        ReactDOM.render(<App/>,document.querySelector("#app"));
     </script>
 </body>
 </html>
